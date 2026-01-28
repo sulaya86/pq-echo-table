@@ -1,85 +1,45 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
   <meta charset="utf-8" />
-  <title>Power Query Echo Table</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Template Viewer</title>
   <style>
-    body { font-family: system-ui, Arial, sans-serif; margin: 1.5rem; }
-    table { border-collapse: collapse; min-width: 640px; }
-    th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; }
-    th { background: #f7f7f7; }
-    caption { text-align:left; font-weight:600; margin-bottom:8px; }
-    .hint { margin: 12px 0 20px; color:#555; }
+    body { font-family: Arial, sans-serif; margin: 1.5rem; }
+    table { border-collapse: collapse; min-width: 520px; }
+    th, td { border: 1px solid #ccc; padding: 6px 8px; }
+    th { background: #f2f2f2; }
   </style>
 </head>
 <body>
-  <h1>Echo Table for Power Query</h1>
-  <div class="hint">
-    Pass parameters in the query string (e.g. <code>?tplid=1649&amp;colA=abc&amp;colB=123</code>).<br/>
-    Use repeated groups like <code>row1_colA</code>, <code>row1_colB</code>, <code>row2_colA</code>, etc., to create multiple rows.
-  </div>
-
-  <table id="echoTable" aria-label="Echo Table">
-    <caption>Parameters</caption>
+  <h1>Template Data</h1>
+  <table id="tplTable">
     <thead>
-      <tr><th>Key</th><th>Value</th></tr>
+      <tr>
+        <th>Field</th>
+        <th>Value</th>
+      </tr>
     </thead>
-    <tbody></tbody>
-  </table>
-
-  <hr />
-
-  <table id="rowsTable" aria-label="Rows Table">
-    <caption>Rows (detected by rowN_* keys)</caption>
-    <thead id="rowsHead"></thead>
-    <tbody id="rowsBody"></tbody>
+    <tbody id="tplBody"></tbody>
   </table>
 
   <script>
-    // Parse query string
-    const params = new URLSearchParams(window.location.search);
+    const q = new URLSearchParams(location.search);
+    const tplid = q.get("tplid") || "";
+    const tbody = document.getElementById("tplBody");
 
-    // Fill the key/value table
-    const kvBody = document.querySelector('#echoTable tbody');
-    for (const [k, v] of params.entries()) {
-      const tr = document.createElement('tr');
+    const rows = [
+      ["tplid", tplid],
+      ["Name", tplid ? `Template ${tplid}` : ""],
+      ["Owner", "QA Team"],
+      ["Status", "Active"]
+    ];
+
+    rows.forEach(([k, v]) => {
+      const tr = document.createElement("tr");
       tr.innerHTML = `<td>${k}</td><td>${v}</td>`;
-      kvBody.appendChild(tr);
-    }
-
-    // Build a row-based table if keys like row1_colA, row2_colA exist
-    // 1) Group by row index prefix: row1_, row2_, ...
-    const rowGroups = {};
-    for (const [k, v] of params.entries()) {
-      const m = k.match(/^row(\d+)_([^=]+)$/i);
-      if (!m) continue;
-      const [, idx, col] = m;
-      rowGroups[idx] ??= {};
-      rowGroups[idx][col] = v;
-    }
-
-    const rowIndexes = Object.keys(rowGroups).sort((a,b)=>+a - +b);
-    if (rowIndexes.length) {
-      // 2) Infer all column names from union of keys
-      const allCols = Array.from(
-        new Set(rowIndexes.flatMap(i => Object.keys(rowGroups[i])))
-      ).sort();
-
-      // 3) Render header
-      const head = document.getElementById('rowsHead');
-      head.innerHTML = `<tr>${allCols.map(c=>`<th>${c}</th>`).join('')}</tr>`;
-
-      // 4) Render body
-      const body = document.getElementById('rowsBody');
-      rowIndexes.forEach(i => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = allCols.map(c => `<td>${rowGroups[i][c] ?? ''}</td>`).join('');
-        body.appendChild(tr);
-      });
-    } else {
-      document.getElementById('rowsTable').style.display = 'none';
-    }
+      tbody.appendChild(tr);
+    });
   </script>
 </body>
 </html>
+``
