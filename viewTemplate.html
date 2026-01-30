@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>QMS Template Viewer (Single Table with Headers)</title>
+  <title>QMS Template Viewer (Static Rows, Headers OK)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body { font-family: Arial, sans-serif; margin: 1.5rem; }
-    .info { color:#555; margin-bottom:1rem; }
     table.TFtable { border-collapse: collapse; margin: 16px 0; min-width: 980px; }
     table.TFtable th, table.TFtable td { border: 1px solid #ccc; padding: 6px 8px; }
     table.TFtable thead th { background: #f7f7f7; text-align: left; }
@@ -14,82 +13,52 @@
 </head>
 <body>
 
-  <h1>QMS Template Viewer (Single Table with Headers)</h1>
+<h1>QMS Template Viewer (Static Rows for Power Query)</h1>
 
-  <div class="info">
-    Use only: <code>?tplid=1649</code><br/>
-    Default: 8 rows generated automatically.
-  </div>
+<table class="TFtable">
+  <thead>
+    <tr>
+      <th>Idx</th>
+      <th>TemplateKey</th>
+      <th>Section</th>
+      <th>RowLabel</th>
+      <th>Feature</th>
+      <th>Owner</th>
+      <th>Area</th>
+      <th>Code</th>
+      <th>Ref</th>
+      <th>RuleType</th>
+      <th>Note</th>
+      <th>Tag</th>
+      <th>Version</th>
+    </tr>
+  </thead>
 
-  <table class="TFtable">
-    <thead>
-      <tr>
-        <th>Idx</th>
-        <th>TemplateKey</th>
-        <th>Section</th>
-        <th>RowLabel</th>
-        <th>Feature</th>
-        <th>Owner</th>
-        <th>Area</th>
-        <th>Code</th>
-        <th>Ref</th>
-        <th>RuleType</th>
-        <th>Note</th>
-        <th>Tag</th>
-        <th>Version</th>
-      </tr>
-    </thead>
-    <tbody id="tbody"></tbody>
-  </table>
+  <tbody>
+    <!-- 8 static rows -->
+    <tr><td>1</td><td>TPL-{{TPLID}}</td><td>Section-1</td><td>Row-1</td><td>OTHER</td><td>Owner-1</td><td>Area-1</td><td>Code-1001</td><td>Ref-1-1</td><td>imperative</td><td>Note 1</td><td>Tag-1</td><td>V1.1</td></tr>
 
-  <script>
-    window.onload = () => {
+    <tr><td>2</td><td>TPL-{{TPLID}}</td><td>Section-1</td><td>Row-2</td><td>OTHER</td><td>Owner-2</td><td>Area-1</td><td>Code-1002</td><td>Ref-1-2</td><td>eimperative</td><td>Note 2</td><td>Tag-2</td><td>V1.2</td></tr>
 
-      // Read only tplid
-      const p = new URLSearchParams(location.search);
-      const tplid = (p.get("tplid") || "").trim();
+    <tr><td>3</td><td>TPL-{{TPLID}}</td><td>Section-1</td><td>Row-3</td><td>BCAM7</td><td>Owner-3</td><td>Area-1</td><td>Code-1003</td><td>Ref-1-3</td><td>rule</td><td>Note 3</td><td>Tag-3</td><td>V1.3</td></tr>
 
-      // Default number of rows
-      const rows = 8;
+    <tr><td>4</td><td>TPL-{{TPLID}}</td><td>Section-1</td><td>Row-4</td><td>OTHER</td><td>Owner-4</td><td>Area-1</td><td>Code-1004</td><td>Ref-1-4</td><td>erule</td><td>Note 4</td><td>Tag-4</td><td>V1.4</td></tr>
 
-      // Values used for RuleType
-      const col10Values = ["imperative", "eimperative", "rule", "erule", "info", "note"];
+    <tr><td>5</td><td>TPL-{{TPLID}}</td><td>Section-1</td><td>Row-5</td><td>OTHER</td><td>Owner-1</td><td>Area-1</td><td>Code-1005</td><td>Ref-1-5</td><td>info</td><td>Note 5</td><td>Tag-5</td><td>V1.5</td></tr>
 
-      const tbody = document.getElementById("tbody");
+    <tr><td>6</td><td>TPL-{{TPLID}}</td><td>Section-1</td><td>Row-6</td><td>BCAM7</td><td>Owner-2</td><td>Area-1</td><td>Code-1006</td><td>Ref-1-6</td><td>note</td><td>Note 6</td><td>Tag-6</td><td>V1.6</td></tr>
 
-      // Helper to create <td>
-      const td = (t) => {
-        const c = document.createElement("td");
-        c.textContent = t;
-        return c;
-      };
+    <tr><td>7</td><td>TPL-{{TPLID}}</td><td>Section-1</td><td>Row-7</td><td>OTHER</td><td>Owner-3</td><td>Area-1</td><td>Code-1007</td><td>Ref-1-7</td><td>rule</td><td>Note 7</td><td>Tag-1</td><td>V1.7</td></tr>
 
-      // Create rows inside tbody
-      for (let r = 1; r <= rows; r++) {
-        const tr = document.createElement("tr");
+    <tr><td>8</td><td>TPL-{{TPLID}}</td><td>Section-1</td><td>Row-8</td><td>OTHER</td><td>Owner-4</td><td>Area-1</td><td>Code-1008</td><td>Ref-1-8</td><td>imperative</td><td>Note 8</td><td>Tag-2</td><td>V1.8</td></tr>
+  </tbody>
+</table>
 
-        tr.appendChild(td(String(r))); // Idx
-
-        const c2  = `TPL-${tplid || 'NA'}`;
-        const c3  = `Section-1`;
-        const c4  = `Row-${r}`;
-        const c5  = (r % 3 === 0) ? "BCAM7" : "OTHER";
-        const c6  = `Owner-${(r % 4) + 1}`;
-        const c7  = `Area-1`;
-        const c8  = `Code-${1000 + r}`;
-        const c9  = `Ref-1-${r}`;
-        const c10 = col10Values[(r - 1) % col10Values.length];
-        const c11 = `Note ${r}`;
-        const c12 = `Tag-${(r % 6) + 1}`;
-        const c13 = `V1.${r}`;
-
-        [c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13].forEach(v => tr.appendChild(td(v)));
-
-        tbody.appendChild(tr);
-      }
-
-    };
-  </script>
+<script>
+// Replace placeholder {{TPLID}} visually for browser users
+const p = new URLSearchParams(location.search);
+document.body.innerHTML = document.body.innerHTML.replace(/{{TPLID}}/g, p.get("tplid") || "NA");
+</script>
 
 </body>
 </html>
