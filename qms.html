@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>QMS Template Viewer (Test)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 1.5rem; }
+    .info { color:#555; margin-bottom:1rem; }
+    table.TFtable { border-collapse: collapse; margin: 16px 0; min-width: 980px; }
+    table.TFtable td { border: 1px solid #ccc; padding: 6px 8px; }
+    .caption { font-weight: 600; margin-top: 24px; }
+    code { background: #f6f6f6; padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>QMS Template Viewer (Test)</h1>
+  <div class="info">
+    Use parameters: <code>?tplid=1649&amp;tables=3&amp;rows=6</code>.<br/>
+    Class name is <code>TFtable</code>, 13 columns, no header rows (to keep <code>Column1</code> numeric).
+  </div>
+
+  <div id="root"></div>
+
+  <script>
+    // --- Read query parameters ---
+    const p = new URLSearchParams(location.search);
+    const tplid  = (p.get('tplid')  || '').trim();
+    const tables = Math.max(1, parseInt(p.get('tables') || '2', 10));
+    const rows   = Math.max(1, parseInt(p.get('rows')   || '8', 10));
+
+    // Rotate these values for Column10 (to trigger your #BCaM step)
+    const col10Values = ["imperative","eimperative","rule","erule","info","note"];
+
+    // Helper to create a TD
+    const td = (text) => {
+      const c = document.createElement('td');
+      c.textContent = text;
+      return c;
+    };
+
+    // Create N tables with 13 columns and <rows> rows each
+    const root = document.getElementById('root');
+
+    for (let t = 1; t <= tables; t++) {
+      // Optional caption (outside the table so we don't add a header <tr>)
+      const cap = document.createElement('div');
+      cap.className = 'caption';
+      cap.textContent = `Section ${t} (tplid=${tplid || '—'})`;
+      root.appendChild(cap);
+
+      const table = document.createElement('table');
+      table.className = 'TFtable';
+      const tbody = document.createElement('tbody');
+      table.appendChild(tbody);
+
+      for (let r = 1; r <= rows; r++) {
+        const tr = document.createElement('tr');
+
+        // Column1: numeric index (stable Int64)
+        tr.appendChild(td(String(r)));
+
+        // Column2..Column13: synthetic values (stable structure)
+        // Keep simple strings; include tplid for traceability.
+        const c2  = `TPL-${tplid || 'NA'}`;
+        const c3  = `Section-${t}`;
+        const c4  = `Row-${r}`;
+        // Column5 sometimes 'BCAM7' to trigger your rule
+        const c5  = (r % 3 === 0) ? "BCAM7" : "OTHER";
+        const c6  = `Owner-${(r%4)+1}`;
+        const c7  = `Area-${(t%5)+1}`;
+        const c8  = `Code-${1000 + r}`;
+        const c9  = `Ref-${t}-${r}`;
+        // Column10 rotates across allowed values + fillers
+        const c10 = col10Values[(r - 1) % col10Values.length];
+        const c11 = `Note ${r}`;
+        const c12 = `Tag-${(r%6)+1}`;
+        const c13 = `V${t}.${r}`;
+
+        [c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13].forEach(v => tr.appendChild(td(v)));
+        tbody.appendChild(tr);
+      }
+
+      root.appendChild(table);
+    }
+  </script>
+</body>
+</html>
