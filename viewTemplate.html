@@ -13,9 +13,12 @@
   </style>
 </head>
 <body>
+
   <h1>QMS Template Viewer (Single Table with Headers)</h1>
+
   <div class="info">
-    One table (<code>TFtable</code>) with 13 columns.
+    Call using only <code>?tplid=####</code><br/>
+    Default: 8 rows generated automatically.
   </div>
 
   <table class="TFtable">
@@ -28,3 +31,59 @@
         <th>Feature</th>
         <th>Owner</th>
         <th>Area</th>
+        <th>Code</th>
+        <th>Ref</th>
+        <th>RuleType</th>
+        <th>Note</th>
+        <th>Tag</th>
+        <th>Version</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+
+  <script>
+    // --- Read only tplid ---
+    const p = new URLSearchParams(location.search);
+    const tplid = (p.get("tplid") || "").trim();
+
+    // --- DEFAULT row count (no parameter needed anymore) ---
+    const rows = 8;   // you can change this number if you want
+
+    // Values used for RuleType (Column10)
+    const col10Values = ["imperative", "eimperative", "rule", "erule", "info", "note"];
+
+    const tbody = document.getElementById("tbody");
+    const td = (t) => {
+      const c = document.createElement("td");
+      c.textContent = t;
+      return c;
+    };
+
+    // --- Create rows ---
+    for (let r = 1; r <= rows; r++) {
+      const tr = document.createElement("tr");
+
+      tr.appendChild(td(String(r))); // Idx
+
+      const c2  = `TPL-${tplid || 'NA'}`;
+      const c3  = `Section-1`;
+      const c4  = `Row-${r}`;
+      const c5  = (r % 3 === 0) ? "BCAM7" : "OTHER";
+      const c6  = `Owner-${(r % 4) + 1}`;
+      const c7  = `Area-1`;
+      const c8  = `Code-${1000 + r}`;
+      const c9  = `Ref-1-${r}`;
+      const c10 = col10Values[(r - 1) % col10Values.length];
+      const c11 = `Note ${r}`;
+      const c12 = `Tag-${(r % 6) + 1}`;
+      const c13 = `V1.${r}`;
+
+      [c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13].forEach(v => tr.appendChild(td(v)));
+
+      tbody.appendChild(tr);
+    }
+  </script>
+
+</body>
+</html>
