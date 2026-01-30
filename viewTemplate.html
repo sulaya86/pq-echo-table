@@ -2,24 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>QMS Template Viewer (Single Table)</title>
+  <title>QMS Template Viewer (Headers + Single Table)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body { font-family: Arial, sans-serif; margin: 1.5rem; }
     .info { color:#555; margin-bottom:1rem; }
     table.TFtable { border-collapse: collapse; margin: 16px 0; min-width: 980px; }
-    table.TFtable td { border: 1px solid #ccc; padding: 6px 8px; }
+    table.TFtable th, table.TFtable td { border: 1px solid #ccc; padding: 6px 8px; }
+    table.TFtable thead th { background: #f7f7f7; text-align: left; }
     code { background: #f6f6f6; padding: 2px 6px; border-radius: 4px; }
   </style>
 </head>
 <body>
-  <h1>QMS Template Viewer (Single Table)</h1>
+  <h1>QMS Template Viewer (Single Table with Headers)</h1>
   <div class="info">
     Use parameters: <code>?tplid=1649&amp;rows=8</code>.<br/>
-    Exactly one table with class <code>TFtable</code>, 13 columns, no header row.
+    One table (<code>TFtable</code>) with 13 columns and a header row in <code>&lt;thead&gt;</code>.
   </div>
 
-  <table class="TFtable"><tbody id="tbody"></tbody></table>
+  <table class="TFtable">
+    <thead>
+      <tr>
+        <th>Idx</th>
+        <th>TemplateKey</th>
+        <th>Section</th>
+        <th>RowLabel</th>
+        <th>Feature</th>
+        <th>Owner</th>
+        <th>Area</th>
+        <th>Code</th>
+        <th>Ref</th>
+        <th>RuleType</th>
+        <th>Note</th>
+        <th>Tag</th>
+        <th>Version</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
 
   <script>
     // Read query parameters
@@ -27,8 +47,8 @@
     const tplid = (p.get('tplid') || '').trim();
     const rows  = Math.max(1, parseInt(p.get('rows') || '8', 10));
 
-    // Values that help drive your #BCaM rule in Column10 + Column5
-    const col10Values = ["imperative","eimperative","rule","erule","info","note"];
+    // For RuleType to exercise your #BCaM logic
+    const col10Values = ["imperative", "eimperative", "rule", "erule", "info", "note"];
 
     const tbody = document.getElementById('tbody');
     const td = (t) => { const c=document.createElement('td'); c.textContent=t; return c; };
@@ -36,19 +56,19 @@
     for (let r = 1; r <= rows; r++) {
       const tr = document.createElement('tr');
 
-      // Column1 numeric (keeps Int64.Type happy)
+      // 1) Idx (numeric)
       tr.appendChild(td(String(r)));
 
-      // Columns 2..13 (stable structure, simple strings)
+      // 2..13) The rest
       const c2  = `TPL-${tplid || 'NA'}`;
       const c3  = `Section-1`;
       const c4  = `Row-${r}`;
-      const c5  = (r % 3 === 0) ? "BCAM7" : "OTHER";        // triggers your rule
+      const c5  = (r % 3 === 0) ? "BCAM7" : "OTHER";  // triggers your #BCaM rule with RuleType
       const c6  = `Owner-${(r%4)+1}`;
       const c7  = `Area-1`;
       const c8  = `Code-${1000 + r}`;
       const c9  = `Ref-1-${r}`;
-      const c10 = col10Values[(r - 1) % col10Values.length]; // triggers your rule
+      const c10 = col10Values[(r - 1) % col10Values.length];
       const c11 = `Note ${r}`;
       const c12 = `Tag-${(r%6)+1}`;
       const c13 = `V1.${r}`;
@@ -59,4 +79,3 @@
   </script>
 </body>
 </html>
-``
