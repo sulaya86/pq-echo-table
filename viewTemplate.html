@@ -1,0 +1,19 @@
+// Query: Templates_All_QMS
+let
+    BaseUrl     = "https://sulaya86.github.io/pq-echo-table/qms.html",   // or the shorter index.html
+    Source      = Templates_Data,                                        // your list with column [tplid]
+    DistinctIds = Table.Distinct(Table.SelectColumns(Source, {"tplid"})),
+
+    Invoked = Table.AddColumn(
+        DistinctIds,
+        "Data",
+        each fnQmsParse13(BaseUrl, Text.From([tplid])),
+        type table
+    ),
+
+    FirstCols = if Table.RowCount(Invoked) > 0 then Table.ColumnNames(Invoked{0}[Data]) else {},
+    Expanded  = if List.Count(FirstCols) > 0
+                then Table.ExpandTableColumn(Invoked, "Data", FirstCols, FirstCols)
+                else Invoked
+in
+    Expanded
