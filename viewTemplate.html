@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>QMS Template Viewer (Headers + Single Table)</title>
+  <title>QMS Template Viewer (Single Table with Headers)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body { font-family: Arial, sans-serif; margin: 1.5rem; }
@@ -10,14 +10,13 @@
     table.TFtable { border-collapse: collapse; margin: 16px 0; min-width: 980px; }
     table.TFtable th, table.TFtable td { border: 1px solid #ccc; padding: 6px 8px; }
     table.TFtable thead th { background: #f7f7f7; text-align: left; }
-    code { background: #f6f6f6; padding: 2px 6px; border-radius: 4px; }
   </style>
 </head>
 <body>
   <h1>QMS Template Viewer (Single Table with Headers)</h1>
   <div class="info">
-    Use parameters: <code>?tplid=1649&amp;rows=8</code>.<br/>
-    One table (<code>TFtable</code>) with 13 columns and a header row in <code>&lt;thead&gt;</code>.
+    Use parameters: <code>?tplid=1649&amp;rows=8</code><br>
+    One table (<code>TFtable</code>) with 13 columns.
   </div>
 
   <table class="TFtable">
@@ -30,52 +29,3 @@
         <th>Feature</th>
         <th>Owner</th>
         <th>Area</th>
-        <th>Code</th>
-        <th>Ref</th>
-        <th>RuleType</th>
-        <th>Note</th>
-        <th>Tag</th>
-        <th>Version</th>
-      </tr>
-    </thead>
-    <tbody id="tbody"></tbody>
-  </table>
-
-  <script>
-    // Read query parameters
-    const p = new URLSearchParams(location.search);
-    const tplid = (p.get('tplid') || '').trim();
-    const rows  = Math.max(1, parseInt(p.get('rows') || '8', 10));
-
-    // For RuleType to exercise your #BCaM logic
-    const col10Values = ["imperative", "eimperative", "rule", "erule", "info", "note"];
-
-    const tbody = document.getElementById('tbody');
-    const td = (t) => { const c=document.createElement('td'); c.textContent=t; return c; };
-
-    for (let r = 1; r <= rows; r++) {
-      const tr = document.createElement('tr');
-
-      // 1) Idx (numeric)
-      tr.appendChild(td(String(r)));
-
-      // 2..13) The rest
-      const c2  = `TPL-${tplid || 'NA'}`;
-      const c3  = `Section-1`;
-      const c4  = `Row-${r}`;
-      const c5  = (r % 3 === 0) ? "BCAM7" : "OTHER";  // triggers your #BCaM rule with RuleType
-      const c6  = `Owner-${(r%4)+1}`;
-      const c7  = `Area-1`;
-      const c8  = `Code-${1000 + r}`;
-      const c9  = `Ref-1-${r}`;
-      const c10 = col10Values[(r - 1) % col10Values.length];
-      const c11 = `Note ${r}`;
-      const c12 = `Tag-${(r%6)+1}`;
-      const c13 = `V1.${r}`;
-
-      [c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13].forEach(v => tr.appendChild(td(v)));
-      tbody.appendChild(tr);
-    }
-  </script>
-</body>
-</html>
